@@ -5,6 +5,11 @@ export async function signIn(email, password) {
     return { user: data?.user, error };
 }
 
+export async function signUp(email, password) {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    return { user: data?.user, error };
+}
+
 export async function isLoggedIn() {
     const { data, error } = await supabase.auth.getSession();
 

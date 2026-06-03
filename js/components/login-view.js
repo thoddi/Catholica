@@ -1,4 +1,4 @@
-import { signIn } from '../services/authenticationService.js';
+import { signIn, signUp } from '../services/authenticationService.js';
 
 class LoginView extends HTMLElement {
     connectedCallback() {
@@ -11,6 +11,7 @@ class LoginView extends HTMLElement {
         const emailInput = this.querySelector('#login-email');
         const passwordInput = this.querySelector('#login-password');
         const messageDiv = this.querySelector('#login-message');
+        const signUpButton = this.querySelector('#signup-button');
 
         form?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -33,6 +34,24 @@ class LoginView extends HTMLElement {
                 messageDiv.innerHTML = '<div class="text-danger">An unexpected error occurred.</div>';
             }
         });
+
+        signUpButton?.addEventListener('click', async () => {
+            messageDiv.innerHTML = '<div class="text-info">Creating account...</div>';
+
+            try {
+                const { user, error } = await signUp(emailInput.value, passwordInput.value);
+                if (error) {
+                    messageDiv.innerHTML = `<div class="text-danger">${error.message}</div>`;
+                    return;
+                }
+
+                if (user) {
+                    messageDiv.innerHTML = '<div class="text-success">Account created. Check your email to confirm sign up.</div>';
+                }
+            } catch {
+                messageDiv.innerHTML = '<div class="text-danger">An unexpected error occurred.</div>';
+            }
+        });
     }
 
     render() {
@@ -48,7 +67,8 @@ class LoginView extends HTMLElement {
                                 <form class="text-center" method="post" id="login-form">
                                     <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email" id="login-email" required=""></div>
                                     <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Password" id="login-password" required=""></div>
-                                    <div class="mb-3"><button class="btn btn-primary d-block w-100" type="submit">Login</button></div>
+                                    <div class="mb-2"><button class="btn btn-primary d-block w-100" type="submit">Login</button></div>
+                                    <div class="mb-3"><button class="btn btn-outline-primary d-block w-100" type="button" id="signup-button">Sign up</button></div>
                                     <div class="mt-3" id="login-message"></div>
                                     <p class="text-muted">Forgot your password?</p>
                                 </form>
