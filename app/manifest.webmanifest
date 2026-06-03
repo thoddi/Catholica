@@ -1,0 +1,17 @@
+{
+  "name": "Catholica",
+  "short_name": "Catholica",
+  "start_url": "./index.html#/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fcfaf7",
+  "theme_color": "#212529",
+  "icons": [
+    {
+      "src": "../assets/img/Cover_crop.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
