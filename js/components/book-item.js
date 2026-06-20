@@ -21,7 +21,7 @@ class BookItem extends HTMLElement {
             return;
         }
 
-        window.location.hash = `#/reader?bookId=${encodeURIComponent(this.#bookId)}&chapter=1`;
+        window.location.hash = `#/book?bookId=${encodeURIComponent(this.#bookId)}`;
     };
 
     async loadBook() {

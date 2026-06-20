@@ -15,6 +15,7 @@ class CatholicaApp extends HTMLElement {
     getRoute() {
         const hash = window.location.hash || '#/';
         if (hash.startsWith('#/reader')) return 'reader';
+        if (hash.startsWith('#/book')) return 'book';
         if (hash.startsWith('#/notes')) return 'notes';
         if (hash.startsWith('#/login')) return 'login';
         return 'home';
@@ -24,6 +25,7 @@ class CatholicaApp extends HTMLElement {
         const route = this.getRoute();
         const view = {
             home: '<home-view></home-view>',
+            book: '<book-cover-view></book-cover-view>',
             reader: '<reader-view></reader-view>',
             notes: '<notes-view></notes-view>',
             login: '<login-view></login-view>'

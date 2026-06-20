@@ -1,30 +1,49 @@
-import { getShelfBooks } from '../services/dataService.js';
+import { getShelfBooks, getShelfReadingPlans } from '../services/dataService.js';
 
 class BookShelf extends HTMLElement {
     connectedCallback() {
         this.render();
-        this.loadBooks();
+        this.loadContent();
     }
 
     get #id() {
         return this.getAttribute('id') || '';
     }
 
-    async loadBooks() {
-        const booksContainer = this.querySelector('[data-books]');
-        if (!booksContainer || !this.#id) {
+    async loadContent() {
+        const container = this.querySelector('[data-books]');
+        if (!container || !this.#id) {
             return;
         }
 
-        const { bookIds, error } = await getShelfBooks(this.#id);
-        if (error || !Array.isArray(bookIds) || bookIds.length === 0) {
-            booksContainer.innerHTML = '<div class="small text-muted px-2">Engar bækur fundust.</div>';
+        const [{ bookIds, error: booksError }, { readingPlans, error: plansError }] = await Promise.all([
+            getShelfBooks(this.#id),
+            getShelfReadingPlans(this.#id)
+        ]);
+
+        const hasBooks = !booksError && Array.isArray(bookIds) && bookIds.length > 0;
+        const hasPlans = !plansError && Array.isArray(readingPlans) && readingPlans.length > 0;
+
+        if (!hasBooks && !hasPlans) {
+            container.innerHTML = '<div class="small text-muted px-2">Engar bækur fundust.</div>';
             return;
         }
 
-        booksContainer.innerHTML = bookIds.map((bookId) => `
-            <book-item book-id="${this.escapeAttribute(bookId)}"></book-item>
-        `).join('');
+        let html = '';
+
+        if (hasBooks) {
+            html += bookIds.map((bookId) => `
+                <book-item book-id="${this.escapeAttribute(bookId)}"></book-item>
+            `).join('');
+        }
+
+        if (hasPlans) {
+            html += readingPlans.map((plan) => `
+                <reading-plan-item plan-id="${this.escapeAttribute(plan.id)}" plan-title="${this.escapeAttribute(plan.title)}"></reading-plan-item>
+            `).join('');
+        }
+
+        container.innerHTML = html;
     }
 
     escapeAttribute(value) {
